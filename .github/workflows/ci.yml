@@ -60,7 +60,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.NCP_REGISTRY_URL }}/${{ github.ref_name }}
+          tags: ${{ secrets.NCP_REGISTRY_URL }}/yogi-odi-gym:${{ github.ref_name }}
 
 #      - name: Build and push Docker image
 #        uses: docker/build-push-action@v4
