@@ -32,9 +32,6 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
-#      - name: Test with Gradle
-#        run: ./gradlew test
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -44,59 +41,35 @@ jobs:
           username: ${{ env.DOCKER_HUB_USERNAME }}
           password: ${{ env.DOCKER_HUB_TOKEN }}
 
-#      - name: Build and Push Image (Multi-Arch)
-#        uses: docker/build-push-action@v4
-#        run: |
-#          docker buildx create --use
-#          docker buildx build --platform linux/amd64,linux/arm64 \
-#            -t ${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest \
-#            --push .
-
-#      - name: Get current date
-#        id: date
-#        run: echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
-
-#      - name: Set up Docker Buildx
-#        uses: docker/setup-buildx-action@v2
-#
-#      - name: Build and push Docker image
-#        uses: docker/build-push-action@v4
-#        with:
-#          context: .
-#          platforms: linux/amd64,linux/arm64
-#          push: true
-#          tags: |
-#            echo ${GITHUB_REF}
-#            if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
-#              TAG="main"
-#            elif [[ "${GITHUB_REF}" == "refs/heads/dev" ]]; then
-#              TAG="dev"
-#            else
-#              TAG="latest"
-#            fi
-#            ${{ env.IMAGE_NAME }}:$TAG
-            
-            
-
-#            ${{ env.IMAGE_NAME }}:${{ steps.date.outputs.date }}
-#      - name: Build and push Docker image
-#        uses: docker/build-push-action@v4
-#        with:
-#          context: .
-#          push: true
-#          tags: |
-#            ${{ env.IMAGE_NAME }}:latest
-#            ${{ env.IMAGE_NAME }}:${{ steps.date.outputs.date }}
-#          cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:latest
-#          cache-to: type=inline
-      # 3. Docker 이미지 빌드
       - name: print branch
         run: echo ${{ env.BRANCH }}
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          tags: |
-            ${{ env.IMAGE_NAME }}:${{github.head_ref}}
+#      - name: Build and push Docker image
+#        uses: docker/build-push-action@v4
+#        with:
+#          context: .
+#          push: true
+#          tags: |
+#            ${{ env.IMAGE_NAME }}:${{github.head_ref}}
+
+      # 3. Docker 이미지 빌드
+      - name: Build Docker image
+        run: |
+          TAG_NAME="latest"
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            TAG_NAME="main"
+          elif [ "${{ github.ref }}" == "refs/heads/dev" ]; then
+            TAG_NAME="dev"
+          fi
+          docker build -t your-dockerhub-username/your-repo-name:$TAG_NAME .
+
+      # 4. Docker 이미지 푸시
+      - name: Push Docker image
+        run: |
+          TAG_NAME="latest"
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            TAG_NAME="main"
+          elif [ "${{ github.ref }}" == "refs/heads/dev" ]; then
+            TAG_NAME="dev"
+          fi
+          docker push your-dockerhub-username/your-repo-name:$TAG_NAME
