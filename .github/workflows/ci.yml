@@ -89,10 +89,11 @@ jobs:
 #          cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:latest
 #          cache-to: type=inline
       # 3. Docker 이미지 빌드
+      - name: print branch
+        run: echo ${{ github.head_ref }};
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
-        run: echo ${{ github.head_ref }};
         with:
           context: .
           push: true
