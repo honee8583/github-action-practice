@@ -65,6 +65,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
+            echo ${GITHUB_REF}
             if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
               TAG="main"
             elif [[ "${GITHUB_REF}" == "refs/heads/dev" ]]; then
