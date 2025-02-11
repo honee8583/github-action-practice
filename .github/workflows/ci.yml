@@ -99,4 +99,4 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ env.IMAGE_NAME }}:${{ github.head_ref }}
+            ${{ env.IMAGE_NAME }}:${{github.head_ref}}
