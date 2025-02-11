@@ -58,4 +58,4 @@ jobs:
 #            ${{ env.IMAGE_NAME }}:${{ github.ref_name }}
         env:
           NCP_REGISTRY_URL: ${{ secrets.NCP_REGISTRY_URL }}
-          NCP_REPOSITORY_NAME: ${{ yogi-odi-gym-registry }}
+          NCP_REPOSITORY_NAME: ${{ secrets.yogi-odi-gym-registry }}
