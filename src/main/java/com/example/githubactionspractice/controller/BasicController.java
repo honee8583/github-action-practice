@@ -12,6 +12,6 @@ public class BasicController {
     @GetMapping("/hello")
     public ResponseEntity<?> hello() {
         log.info("HELLO!");
-        return ResponseEntity.ok().body("hello3");
+        return ResponseEntity.ok().body("hello1");
     }
 }
