@@ -43,17 +43,27 @@ jobs:
           username: ${{ env.DOCKER_HUB_USERNAME }}
           password: ${{ env.DOCKER_HUB_TOKEN }}
 
-      - name: Get current date
-        id: date
-        run: echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
-
-      - name: Build and push Docker image
+      - name: Build and Push Image (Multi-Arch)
         uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          tags: |
-            ${{ env.IMAGE_NAME }}:latest
-            ${{ env.IMAGE_NAME }}:${{ steps.date.outputs.date }}
-          cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:latest
-          cache-to: type=inline
+        run: |
+          # Buildx 인스턴스 생성 및 사용 설정
+          docker buildx create --use
+
+          # 다중 아키텍처 빌드 및 Docker Hub에 푸시
+          docker buildx build --platform linux/amd64,linux/arm64 \
+            -t ${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest \
+            --push .
+#      - name: Get current date
+#        id: date
+#        run: echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+
+#      - name: Build and push Docker image
+#        uses: docker/build-push-action@v4
+#        with:
+#          context: .
+#          push: true
+#          tags: |
+#            ${{ env.IMAGE_NAME }}:latest
+#            ${{ env.IMAGE_NAME }}:${{ steps.date.outputs.date }}
+#          cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:latest
+#          cache-to: type=inline
