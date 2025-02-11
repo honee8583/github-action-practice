@@ -78,19 +78,19 @@ jobs:
       - name: SSH into Server and Deploy Service
         uses: appleboy/ssh-action@master
         with:
-        host: ${{ secrets.SSH_HOST }}
-        port: 22
-        username: ${{ secrets.SSH_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: |
-          if docker service inspect my-service >/dev/null 2>&1; then
-            echo "Updating existing service..."
-            docker service update --image honee8583/yogi-odi-gym:dev
-          else
-            echo "Creating new service..."
-            docker service create \
-              --name yog \
-              --replicas 3 \
-              -p 8080:8080 \
-              honee8583/yogi-odi-gym:dev
-          fi
+          host: ${{ secrets.SSH_HOST }}
+          port: 22
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            if docker service inspect my-service >/dev/null 2>&1; then
+              echo "Updating existing service..."
+              docker service update --image honee8583/yogi-odi-gym:dev
+            else
+              echo "Creating new service..."
+              docker service create \
+                --name yog \
+                --replicas 3 \
+                -p 8080:8080 \
+                honee8583/yogi-odi-gym:dev
+            fi
