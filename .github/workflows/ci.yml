@@ -46,10 +46,7 @@ jobs:
       - name: Build and Push Image (Multi-Arch)
         uses: docker/build-push-action@v4
         run: |
-          # Buildx 인스턴스 생성 및 사용 설정
           docker buildx create --use
-
-          # 다중 아키텍처 빌드 및 Docker Hub에 푸시
           docker buildx build --platform linux/amd64,linux/arm64 \
             -t ${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest \
             --push .
