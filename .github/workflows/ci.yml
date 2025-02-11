@@ -65,7 +65,14 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ${{ env.IMAGE_NAME }}:latest
+            if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+              TAG="main"
+            elif [[ "${GITHUB_REF}" == "refs/heads/dev" ]]; then
+              TAG="dev"
+            else
+              TAG="latest"
+            fi
+            ${{ env.IMAGE_NAME }}:$TAG
 #            ${{ env.IMAGE_NAME }}:${{ steps.date.outputs.date }}
 #      - name: Build and push Docker image
 #        uses: docker/build-push-action@v4
