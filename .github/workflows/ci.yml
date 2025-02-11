@@ -89,15 +89,11 @@ jobs:
 #          cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:latest
 #          cache-to: type=inline
       # 3. Docker 이미지 빌드
-      - name: Determine branch name
-        id: get_branch
-        run: echo "::set-output name=branch::$(echo ${GITHUB_REF#refs/heads/})"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
-        run: tagName=$( [ "${{ steps.get_branch.outputs.branch }}" = "main" ] && echo "main" || echo "dev" )
         with:
           context: .
           push: true
           tags: |
-            ${{ env.IMAGE_NAME }}:$tagName
+            ${{ env.IMAGE_NAME }}:${{ github.head_ref }}
