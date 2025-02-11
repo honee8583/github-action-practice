@@ -9,6 +9,7 @@ public class BasicController {
 
     @GetMapping("/hello")
     public ResponseEntity<?> hello() {
+        // nothing
         return ResponseEntity.ok().body("hello");
     }
 }
