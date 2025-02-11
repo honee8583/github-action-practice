@@ -60,7 +60,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.NCP_REGISTRY_URL }}/yogi-odi-gym:${{ github.ref_name }}
+          tags: ${{ env.IMAGE_NAME }}:${{ github.ref_name }}
 
 #      - name: Build and push Docker image
 #        uses: docker/build-push-action@v4
@@ -74,3 +74,23 @@ jobs:
 #        env:
 #          NCP_REGISTRY_URL: ${{ secrets.NCP_REGISTRY_URL }}
 #          NCP_REPOSITORY_NAME: ${{ secrets.yogi-odi-gym-registry }}
+
+#      - name: SSH into Server and Deploy Service
+#        uses: appleboy/ssh-action@master
+#        with:
+#        host: ${{ secrets.SSH_HOST }}
+#        username: ${{ secrets.SSH_USER }}
+#        key: ${{ secrets.SSH_PRIVATE_KEY }}
+#        script: |
+#          if docker service inspect my-service >/dev/null 2>&1; then
+#            echo "Updating existing service..."
+#            docker service update --image mydockerhub/myapp:latest my-service
+#          else
+#            echo "Creating new service..."
+#            docker service create \
+#              --name my-service \
+#              --replicas 3 \
+#              --publish 80:80 \
+#              --network my-overlay-network \
+#              mydockerhub/myapp:latest
+#          fi
