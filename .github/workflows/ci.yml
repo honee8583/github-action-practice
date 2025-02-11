@@ -42,7 +42,7 @@ jobs:
 
       - name: Log in to NCP Container Registry
         run: |
-          echo ${{ secrets.NCP_ACCESS_KEY }} | docker login -u ${NCP_ACCESS_KEY} --password-stdin https://cr.eu-north-1.ncloudservice.com
+          echo ${{ secrets.NCP_ACCESS_KEY }} | docker login -u ${{ secrets.NCP_ACCESS_KEY}} --password-stdin https://cr.eu-north-1.ncloudservice.com
         env:
           NCP_ACCESS_KEY: ${{ secrets.NCP_ACCESS_KEY }}
           NCP_SECRET_KEY: ${{ secrets.NCP_SECRET_KEY }}
@@ -54,7 +54,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ${NCP_REGISTRY_URL}/${NCP_REPOSITORY_NAME}:${{ github.ref_name }}
+            ${{ secrets.NCP_REGISTRY_URL }}/${{ secrets.NCP_REPOSITORY_NAME}}:${{ github.ref_name }}
 #            ${{ env.IMAGE_NAME }}:${{ github.ref_name }}
         env:
           NCP_REGISTRY_URL: ${{ secrets.NCP_REGISTRY_URL }}
