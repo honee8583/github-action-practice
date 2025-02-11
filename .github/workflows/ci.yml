@@ -43,13 +43,14 @@ jobs:
           username: ${{ env.DOCKER_HUB_USERNAME }}
           password: ${{ env.DOCKER_HUB_TOKEN }}
 
-      - name: Build and Push Image (Multi-Arch)
-        uses: docker/build-push-action@v4
-        run: |
-          docker buildx create --use
-          docker buildx build --platform linux/amd64,linux/arm64 \
-            -t ${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest \
-            --push .
+#      - name: Build and Push Image (Multi-Arch)
+#        uses: docker/build-push-action@v4
+#        run: |
+#          docker buildx create --use
+#          docker buildx build --platform linux/amd64,linux/arm64 \
+#            -t ${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest \
+#            --push .
+
 #      - name: Get current date
 #        id: date
 #        run: echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
