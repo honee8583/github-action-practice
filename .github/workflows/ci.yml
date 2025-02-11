@@ -89,23 +89,15 @@ jobs:
 #          cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:latest
 #          cache-to: type=inline
       # 3. Docker 이미지 빌드
-      - name: Build Docker image
-        run: |
-          TAG_NAME="latest"
-          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
-            TAG_NAME="main"
-          elif [ "${{ github.ref }}" == "refs/heads/dev" ]; then
-            TAG_NAME="dev"
-          fi
-          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/yogi-odi-gym:$TAG_NAME .
+      - name: Determine branch name
+        id: get_branch
+        run: echo "::set-output name=branch::$(echo ${GITHUB_REF#refs/heads/})"
 
-      # 4. Docker 이미지 푸시
-      - name: Push Docker image
-        run: |
-          TAG_NAME="latest"
-          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
-            TAG_NAME="main"
-          elif [ "${{ github.ref }}" == "refs/heads/dev" ]; then
-            TAG_NAME="dev"
-          fi
-          docker push your-dockerhub-username/your-repo-name:$TAG_NAME
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        run: tagName=$( [ "${{ steps.get_branch.outputs.branch }}" = "main" ] && echo "main" || echo "dev" )
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:$tagName
