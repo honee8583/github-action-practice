@@ -10,6 +10,7 @@ env:
   DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
   DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
   IMAGE_NAME: ${{ secrets.DOCKER_HUB_USERNAME }}/yogi-odi-gym
+  BRANCH: ${{ github.base_ref }}
 
 jobs:
   build:
@@ -90,7 +91,7 @@ jobs:
 #          cache-to: type=inline
       # 3. Docker 이미지 빌드
       - name: print branch
-        run: echo ${{ github.base_ref }};
+        run: echo $BRANCH;
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
