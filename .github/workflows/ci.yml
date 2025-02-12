@@ -85,8 +85,8 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           port: 22
           username: root
-#          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          password: ${{ secrets.SSH_PASSWORD }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+#          password: ${{ secrets.SSH_PASSWORD }}
           script: |
             echo ${{ secrets.SSH_HOST }}
             echo ${{ secrets.SSH_PASSWORD }}
