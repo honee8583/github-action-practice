@@ -79,6 +79,6 @@ jobs:
         with:
           host: ${{ secrets.AWS_HOST }}
           username: ubuntu
-          password: ${{ secrets.AWS_PASSWORD }}
+          key: ${{ secrets.AWS_PASSWORD }}
           script: |
             echo "success"
