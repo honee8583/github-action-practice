@@ -73,12 +73,15 @@ jobs:
 #        env:
 #          NCP_REGISTRY_URL: ${{ secrets.NCP_REGISTRY_URL }}
 #          NCP_REPOSITORY_NAME: ${{ secrets.yogi-odi-gym-registry }}
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
 
       - name: NCP Docker Swarm Deploy
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
-          username: root
+          username:  ncp
           key: ${{ secrets.CUSTOM_PRIVATE_KEY }}
-          script: |
-            echo "success"
+          script: whoami
