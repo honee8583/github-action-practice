@@ -79,7 +79,7 @@ jobs:
         with:
           host: 175.45.201.227
           username: root
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.CUSTOM_PRIVATE_KEY }}
            # passphrase: U9!$@fa2f8n
           port: 22
           script: |
