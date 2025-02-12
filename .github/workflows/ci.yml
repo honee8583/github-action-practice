@@ -84,5 +84,5 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: root
           #key: ${{ secrets.CUSTOM_PRIVATE_KEY }}
-          password: U9!6mLqH?i+fy
+          #password: U9!6mLqH?i+fy
           script: whoami
