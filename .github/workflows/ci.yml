@@ -74,7 +74,11 @@ jobs:
 #        env:
 #          NCP_REGISTRY_URL: ${{ secrets.NCP_REGISTRY_URL }}
 #          NCP_REPOSITORY_NAME: ${{ secrets.yogi-odi-gym-registry }}
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
 
+    steps:
       - name: SSH into Server and Deploy Service
         uses: appleboy/ssh-action@master
         with:
@@ -84,14 +88,15 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            if docker service inspect my-service >/dev/null 2>&1; then
-              echo "Updating existing service..."
-              docker service update --image ${{ env.IMAGE_NAME }}:dev yog
-            else
-              echo "Creating new service..."
-              docker service create \
-                --name yog \
-                --replicas 3 \
-                -p 8080:8080 \
-                ${{ env.IMAGE_NAME }}:dev
-            fi
+            echo "START!"
+#            if docker service inspect my-service >/dev/null 2>&1; then
+#              echo "Updating existing service..."
+#              docker service update --image ${{ env.IMAGE_NAME }}:dev yog
+#            else
+#              echo "Creating new service..."
+#              docker service create \
+#                --name yog \
+#                --replicas 3 \
+#                -p 8080:8080 \
+#                ${{ env.IMAGE_NAME }}:dev
+#            fi
