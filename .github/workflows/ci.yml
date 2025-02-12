@@ -75,11 +75,10 @@ jobs:
 #          NCP_REPOSITORY_NAME: ${{ secrets.yogi-odi-gym-registry }}
 
       - name: NCP Docker Swarm Deploy
-        uses: appleboy/ssh-action@0.1.6
+        uses: appleboy/ssh-action@master
         with:
-          host: 175.45.201.227
-          username: root
-          password: ${{ secrets.CUSTOM_PRIVATE_KEY }}
-          port: 22
+          host: ${{ secrets.AWS_HOST }}
+          username: ubuntu
+          password: ${{ secrets.AWS_PASSWORD }}
           script: |
             echo "success"
