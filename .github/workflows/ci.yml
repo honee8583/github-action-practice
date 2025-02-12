@@ -81,15 +81,16 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          password: ${{ secrets.SSH_PASSWORD }}
           script: |
             if docker service inspect my-service >/dev/null 2>&1; then
               echo "Updating existing service..."
-              docker service update --image honee8583/yogi-odi-gym:dev
+              docker service update --image ${{ env.IMAGE_NAME }}:dev yog
             else
               echo "Creating new service..."
               docker service create \
                 --name yog \
                 --replicas 3 \
                 -p 8080:8080 \
-                honee8583/yogi-odi-gym:dev
+                ${{ env.IMAGE_NAME }}:dev
             fi
