@@ -79,7 +79,7 @@ jobs:
     steps:
 
       - name: NCP Docker Swarm Deploy
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@1.6.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: root
