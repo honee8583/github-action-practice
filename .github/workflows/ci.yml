@@ -80,7 +80,7 @@ jobs:
           host: 223.130.153.127
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          password: U9!$@fa2f8n
+          passphrase: U9!$@fa2f8n
           port: 22
           script: |
             echo "yeah"
