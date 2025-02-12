@@ -82,6 +82,6 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
-          username:  ncp
+          username: root
           key: ${{ secrets.CUSTOM_PRIVATE_KEY }}
           script: whoami
