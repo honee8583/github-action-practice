@@ -89,12 +89,12 @@ jobs:
           script: |
             if docker service inspect yog >/dev/null 2>&1; then
               echo "Updating existing service..."
-              docker service update --image ${{ IMAGE_NAME }}:dev yog
+              docker service update --image ${{ env.IMAGE_NAME }}:dev yog
             else
               echo "Creating new service..."
               docker service create \
                 --name yog \
                 --replicas 3 \
                 -p 8080:8080 \
-                ${{ IMAGE_NAME }}:dev
+                ${{ env.IMAGE_NAME }}:dev
             fi
