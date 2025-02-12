@@ -81,8 +81,8 @@ jobs:
       - name: NCP Docker Swarm Deploy
         uses: appleboy/ssh-action@master
         with:
-          host: docker-server
-          username: root
+          host: ${{ secrets.SSH_HOST }}
+          username: docker-server
           password: ${{ secrets.SSH_PRIVATE_KEY }}
           #password: U9!6mLqH?i+fy
           script: whoami
