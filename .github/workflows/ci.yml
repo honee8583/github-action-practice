@@ -78,10 +78,9 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
-          port: 22
-          username: ncp
-#          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          username: root
           password: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
           script: |
             echo ${{ secrets.SSH_HOST }}
             echo ${{ secrets.SSH_PASSWORD }}
