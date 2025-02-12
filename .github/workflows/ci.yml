@@ -87,7 +87,9 @@ jobs:
           username: root
 #          key: ${{ secrets.SSH_PRIVATE_KEY }}
           password: ${{ secrets.SSH_PASSWORD }}
-          script: echo "success"
+          script: |
+            echo ${{ secrets.SSH_HOST }}
+            echo ${{ secrets.SSH_PASSWORD }}
 #            echo "START!"
 #            if docker service inspect my-service >/dev/null 2>&1; then
 #              echo "Updating existing service..."
