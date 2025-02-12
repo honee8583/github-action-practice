@@ -79,15 +79,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-#      - name: NCP Docker Swarm Deploy
-#        uses: appleboy/ssh-action@master
-#        with:
-#          host: ${{ secrets.SSH_HOST }}
-#          port: 22
-#          username: ${{ secrets.SSH_USER }}
-#          key: ${{ secrets.SSH_PRIVATE_KEY }}
-##          password: ${{ secrets.SSH_PASSWORD }}
-#          script: |
+      - name: NCP Docker Swarm Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: 22
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+#          password: ${{ secrets.SSH_PASSWORD }}
+          script: echo "success"
 #            echo "START!"
 #            if docker service inspect my-service >/dev/null 2>&1; then
 #              echo "Updating existing service..."
@@ -100,15 +100,14 @@ jobs:
 #                -p 8080:8080 \
 #                ${{ env.IMAGE_NAME }}:dev
 #            fi
-      - name: 🔑 Set up SSH Key
-        run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key
-          chmod 600 private_key
-
-      - name: 🚀 Connect to NCP Server and Deploy
-        run: |
-          ssh -o StrictHostKeyChecking=no -i private_key root@${{ secrets.SSH_HOST }} << 'EOF'
-            echo "✅ Successfully connected to NCP server!"
-            # 배포 스크립트 실행 (예: 앱 재시작, 업데이트 등)
-            
-          EOF
+#      - name: 🔑 Set up SSH Key
+#        run: |
+#          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key
+#          chmod 600 private_key
+#
+#      - name: 🚀 Connect to NCP Server and Deploy
+#        run: |
+#          ssh -o StrictHostKeyChecking=no -i private_key root@${{ secrets.SSH_HOST }} << 'EOF'
+#            echo "✅ Successfully connected to NCP server!"
+#            # 배포 스크립트 실행 (예: 앱 재시작, 업데이트 등)
+#          EOF
