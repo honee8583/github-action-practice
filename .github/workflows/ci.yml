@@ -79,15 +79,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: NCP Docker Swarm Deploy
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          port: 22
-          username: root
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-#          password: ${{ secrets.SSH_PASSWORD }}
-          script: echo "success"
+    - name: Bootup server
+      uses: cross-the-world/ssh-scp-ssh-pipelines@latest
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        user: root
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+#        pass: U9!6mLqH?i+fy
+        port: 22
+        first_ssh: echo "hello"
+
+#    steps:
+#      - name: NCP Docker Swarm Deploy
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.SSH_HOST }}
+#          port: 22
+#          username: root
+#          key: ${{ secrets.SSH_PRIVATE_KEY }}
+##          password: ${{ secrets.SSH_PASSWORD }}
+#          script: echo "success"
 #            echo "START!"
 #            if docker service inspect my-service >/dev/null 2>&1; then
 #              echo "Updating existing service..."
