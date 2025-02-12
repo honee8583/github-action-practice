@@ -80,7 +80,7 @@ jobs:
 
     steps:
       - name: NCP Docker Swarm Deploy
-        uses: appleboy/ssh-action@v0.1.6
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           port: 22
