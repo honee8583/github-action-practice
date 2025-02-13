@@ -31,69 +31,39 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
-#      - name: Login Docker Hub
-#        uses: docker/login-action@v2
-#        with:
-#          username: ${{ env.DOCKER_HUB_USERNAME }}
-#          password: ${{ env.DOCKER_HUB_TOKEN }}
-
-#      - name: Log in to NCP Container Registry
-#        run: |
-#          echo ${{ secrets.NCP_ACCESS_KEY }} | docker login -u ${{ secrets.NCP_ACCESS_KEY}} --password-stdin https://cr.eu-north-1.ncloudservice.com
-#        env:
-#          NCP_ACCESS_KEY: ${{ secrets.NCP_ACCESS_KEY }}
-#          NCP_SECRET_KEY: ${{ secrets.NCP_SECRET_KEY }}
-
-      #      NCP 로그인
-      - name: Login to NCP
+      # 도커 로그인
+      - name: Login Docker Hub
         uses: docker/login-action@v2
         with:
-          registry: ${{ secrets.NCP_REGISTRY_URL }}
-          username: ${{ secrets.NCP_ACCESS_KEY }}
-          password: ${{ secrets.NCP_SECRET_KEY }}
+          username: ${{ env.DOCKER_HUB_USERNAME }}
+          password: ${{ env.DOCKER_HUB_TOKEN }}
 
-      #      도커허브로 push
-#      - name: Docker Build and push
-#        uses: docker/build-push-action@v3
-#        with:
-#          context: .
-#          file: ./Dockerfile
-#          push: true
-#          tags: ${{ env.IMAGE_NAME }}:${{ github.ref_name }}
-
-          # NCP Container Registry에 도커 이미지 업로드
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v4
+      # 도커허브로 push
+      - name: Docker Build and push
+        uses: docker/build-push-action@v3
         with:
           context: .
-#          platforms: linux/amd64,linux/arm64
+          file: ./Dockerfile
           push: true
-          tags: |
-            ${{ secrets.NCP_REGISTRY_URL }}/${{ secrets.NCP_REPOSITORY_NAME}}:${{ github.ref_name }}
-        env:
-          NCP_REGISTRY_URL: ${{ secrets.NCP_REGISTRY_URL }}
-          NCP_REPOSITORY_NAME: yogi-odi-gym
+          tags: ${{ env.IMAGE_NAME }}:${{ github.ref_name }}
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    steps:
 
+    steps:
       - name: NCP Docker Swarm Deploy
         uses: appleboy/ssh-action@master
-        ##
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            docker login yogi-odi-gym-registry.kr.ncr.ntruss.com
-            echo "${{ secrets.NCP_SECRET_KEY }}" | docker login cr.ncloud.com -u ${{ secrets.NCP_ACCESS_KEY }} --password-stdin
-            
             if docker service inspect yog >/dev/null 2>&1; then
               echo "Updating existing service..."
               docker service update --image ${{ secrets.NCP_REGISTRY_URL }}/yogi-odi-gym:dev yog
+              docker service update --image ${{ env.IMAGE_NAME }}:dev yog
             else
               echo "Creating new service..."
               docker service create \
