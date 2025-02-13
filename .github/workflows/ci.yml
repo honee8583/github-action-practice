@@ -88,6 +88,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
+            docker login yogi-odi-gym-registry.kr.ncr.ntruss.com
+            
             if docker service inspect yog >/dev/null 2>&1; then
               echo "Updating existing service..."
               docker service update --image ${{ secrets.NCP_REGISTRY_URL }}/yogi-odi-gym:dev yog
