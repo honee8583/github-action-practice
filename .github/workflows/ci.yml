@@ -27,7 +27,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: SPRING_PROFILES_ACTIVE=test ./gradlew build
 
       # 도커 로그인
       - name: Login Docker Hub
