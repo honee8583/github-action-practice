@@ -3,8 +3,6 @@ name: CI/CD
 on:
   push:
     branches: [ "main", "dev" ]
-#  pull_request:
-#    branches: [ "main", "dev" ]
 
 env:
   DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
@@ -41,7 +39,6 @@ jobs:
       - name: Get latest tag version
         id: get_tag
         run: |
-          # 가장 최신 태그 가져오기
           TAG=$(git describe --tags --abbrev=0)
           echo "Latest tag is: $TAG"
           echo "TAG=$TAG" >> $GITHUB_ENV  # 환경 변수에 태그 저장
