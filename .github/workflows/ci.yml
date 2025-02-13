@@ -39,7 +39,7 @@ jobs:
       - name: Get latest tag version
         id: get_tag
         run: |
-          TAG=$(git tag --sort=-creatordate | head -n 1)
+          TAG=$(git describe --tags --always)
           echo "Latest tag is: $TAG"
           echo "TAG=$TAG" >> $GITHUB_ENV  # 환경 변수로 설정하여 다른 스텝에서 사용 가능
 
