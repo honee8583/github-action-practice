@@ -39,7 +39,7 @@ jobs:
       - name: Get latest tag version
         id: get_tag
         run: |
-          TAG=$(git describe --tags || echo "2.0")
+          TAG=$(echo `git tag -l | head -n 1`)
           echo "Latest tag is: $TAG"
 #          echo "TAG=$TAG" >> $GITHUB_ENV
 
@@ -52,6 +52,7 @@ jobs:
           push: true
           tags: ${{ env.IMAGE_NAME }}:${{ github.ref_name }}${{ env.TAG }}
 
+  # 운영서버 배포
   deploy-main:
     if: github.ref == 'refs/heads/main'
     needs: build
@@ -78,6 +79,7 @@ jobs:
               ${{ env.IMAGE_NAME }}:main
           fi
 
+  # 테스트 서버 배포
   deploy-dev:
     if: github.ref == 'refs/heads/dev'
     needs: build
