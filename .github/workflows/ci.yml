@@ -41,7 +41,7 @@ jobs:
         run: |
           TAG=$(git describe --tags --abbrev=0)
           echo "Latest tag is: $TAG"
-          echo "TAG=$TAG" >> $GITHUB_ENV  # 환경 변수에 태그 저장
+#          echo "TAG=$TAG" >> $GITHUB_ENV
 
       # 도커허브로 push
       - name: Docker Build and push
