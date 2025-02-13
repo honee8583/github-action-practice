@@ -62,7 +62,6 @@ jobs:
           script: |
             if docker service inspect yog >/dev/null 2>&1; then
               echo "Updating existing service..."
-              docker service update --image ${{ secrets.NCP_REGISTRY_URL }}/yogi-odi-gym:dev yog
               docker service update --image ${{ env.IMAGE_NAME }}:dev yog
             else
               echo "Creating new service..."
