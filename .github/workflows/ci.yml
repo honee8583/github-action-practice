@@ -83,9 +83,9 @@ jobs:
         ##
         with:
           host: ${{ secrets.SSH_HOST }}
-          username: root
+          username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          password: U9!6mLqH?i+fy
+          password: ${{ secrets.SSH_PASSWORD }}
           script: |
             if docker service inspect yog >/dev/null 2>&1; then
               echo "Updating existing service..."
