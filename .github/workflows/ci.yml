@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Check IP
-        run: ifconfig
+        run: curl ifconfig.me
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
