@@ -7,7 +7,7 @@ on:
 env:
   DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
   DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
-  IMAGE_NAME: ${{ secrets.DOCKER_HUB_USERNAME }}/yogi-odi-gym
+  IMAGE_NAME: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}
 
 jobs:
   build:
@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: NCP Docker Swarm Deploy
+    - name: Docker Swarm Deploy
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SSH_HOST }}
@@ -79,7 +79,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: NCP Test Server Deploy
+      - name: Test Server Deploy
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.TEST_SERVER_HOST }}
@@ -88,7 +88,7 @@ jobs:
           password: ${{ secrets.TEST_SERVER_PASSWORD }}
           script: |
             CONTAINER_NAME="yog"
-            IMAGE_NAME="honee8583/yogi-odi-gym:dev"
+            IMAGE_NAME="${{ env.IMAGE_NAME }}:dev"
 
             echo "🔍 현재 실행 중인 컨테이너 확인 중..."
             if [ "$(docker ps -q -f name=$CONTAINER_NAME)" ]; then
