@@ -83,7 +83,6 @@ jobs:
 
       - name: NCP Docker Swarm Deploy
         uses: appleboy/ssh-action@master
-        ##
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
@@ -92,14 +91,13 @@ jobs:
           script: |
             if docker service inspect yog >/dev/null 2>&1; then
               echo "Updating existing service..."
-#              docker service update --image ${{ env.IMAGE_NAME }}:dev yog
-              docker service update --image ${{ secrets.NCP_REPOSITORY_NAME }}:dev yog
+              docker service update --image ${{ env.IMAGE_NAME }}:dev yog
+#              docker service update --image ${{ secrets.NCP_REPOSITORY_NAME }}:dev yog
             else
               echo "Creating new service..."
               docker service create \
                 --name yog \
                 --replicas 3 \
                 -p 8080:8080 \
-#                ${{ env.IMAGE_NAME }}:dev
-                ${{ secrets.NCP_REPOSITORY_NAME }}:dev            
+                ${{ env.IMAGE_NAME }}:dev
             fi
