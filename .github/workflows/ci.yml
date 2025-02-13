@@ -47,7 +47,8 @@ jobs:
           push: true
           tags: ${{ env.IMAGE_NAME }}:${{ github.ref_name }}
 
-  deploy:
+  deploy-main:
+    if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
 
@@ -71,3 +72,38 @@ jobs:
                 -p 8080:8080 \
                 ${{ env.IMAGE_NAME }}:dev
             fi
+
+  deploy-dev:
+    if: github.ref == 'refs/heads/dev'
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: NCP Test Server Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.TEST_SERVER_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            CONTAINER_NAME="yog"
+            IMAGE_NAME="honee8583/yogi-odi-gym:dev"
+
+            echo "🔍 현재 실행 중인 컨테이너 확인 중..."
+            if [ "$(docker ps -q -f name=$CONTAINER_NAME)" ]; then
+                echo "🛑 실행 중인 컨테이너를 중지하고 삭제합니다..."
+                docker stop $CONTAINER_NAME
+                docker rm $CONTAINER_NAME
+            elif [ "$(docker ps -aq -f name=$CONTAINER_NAME)" ]; then
+                echo "⚠️ 컨테이너가 중지 상태입니다. 삭제 후 재시작합니다..."
+                docker rm $CONTAINER_NAME
+            fi
+
+            echo "📦 최신 Docker 이미지 Pull..."
+            docker pull $IMAGE_NAME
+
+            echo "🚀 새로운 컨테이너 실행..."
+            docker run -dit --name $CONTAINER_NAME -p 8080:8080 $IMAGE_NAME
+
+            echo "✅ 배포 완료!"
