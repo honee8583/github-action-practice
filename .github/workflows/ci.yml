@@ -36,6 +36,10 @@ jobs:
           username: ${{ env.DOCKER_HUB_USERNAME }}
           password: ${{ env.DOCKER_HUB_TOKEN }}
 
+      - name: Fetch tags from remote
+        run: |
+          git fetch --tags  # 태그를 가져옵니다.
+
       - name: Get latest tag
         id: get_tag
         run: |
