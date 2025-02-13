@@ -1,0 +1,40 @@
+name: Auto Increment Minor Tag
+
+on:
+  push:
+    branches:
+      - main  # main 브랜치에 push될 때 실행
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Get Latest Tag
+        id: get_latest_tag
+        run: |
+          latest_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "1.0")
+          echo "Latest tag: $latest_tag"
+          echo "latest_tag=$latest_tag" >> $GITHUB_ENV
+
+      - name: Calculate New Tag
+        id: calculate_new_tag
+        run: |
+          latest_tag=${{ env.latest_tag }}
+          IFS='.' read -r -a parts <<< "$latest_tag"
+          major=${parts[0]}
+          minor=${parts[1]}
+          new_minor=$((minor + 1))
+          new_tag="$major.$new_minor"
+          echo "New tag: $new_tag"
+          echo "new_tag=$new_tag" >> $GITHUB_ENV
+
+      - name: Create and Push Tag
+        run: |
+          git config --global user.name "honee8583"
+          git config --global user.email "honee8583@naver.com"
+          git tag ${{ env.new_tag }}
+          git push origin ${{ env.new_tag }}

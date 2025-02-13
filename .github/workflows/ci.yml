@@ -3,8 +3,8 @@ name: CI/CD
 on:
   push:
     branches: [ "main", "dev" ]
-  pull_request:
-    branches: [ "main", "dev" ]
+#  pull_request:
+#    branches: [ "main", "dev" ]
 
 env:
   DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
@@ -31,52 +31,79 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Login to Docker Hub
+      # 도커 로그인
+      - name: Login Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ env.DOCKER_HUB_USERNAME }}
           password: ${{ env.DOCKER_HUB_TOKEN }}
 
-#      - name: Determine branch name
-#        id: get_branch
-#        run: |
-#          echo "::set-output name=branch::$(echo ${GITHUB_REF#refs/heads/})";
-#          branch=$( [ "${{ steps.get_branch.outputs.branch }}" = "main" ] && echo "main" || echo "dev" );
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v4
+      # 도커허브로 push
+      - name: Docker Build and push
+        uses: docker/build-push-action@v3
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
+          file: ./Dockerfile
           push: true
-          tags: |
-            ${{ env.IMAGE_NAME }}:${{ github.ref_name }}
-#            ${{ env.IMAGE_NAME }}:latest
+          tags: ${{ env.IMAGE_NAME }}:${{ github.ref_name }}
 
+  deploy-main:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
 
+    steps:
+    - name: NCP Docker Swarm Deploy
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        password: ${{ secrets.SSH_PASSWORD }}
+        script: |
+          if docker service inspect yog >/dev/null 2>&1; then
+            echo "Updating existing service..."
+            docker service update --image ${{ env.IMAGE_NAME }}:main yog
+          else
+            echo "Creating new service..."
+            docker service create \
+              --name yog \
+              --replicas 3 \
+              -p 8080:8080 \
+              ${{ env.IMAGE_NAME }}:main
+          fi
 
+  deploy-dev:
+    if: github.ref == 'refs/heads/dev'
+    needs: build
+    runs-on: ubuntu-latest
 
-#      # 3. Docker 이미지 빌드
-#      - name: Build Docker image
-#        run: |
-#          TAG_NAME="latest"
-#          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
-#            TAG_NAME="main"
-#          elif [ "${{ github.ref }}" == "refs/heads/dev" ]; then
-#            TAG_NAME="dev"
-#          fi
-#          docker build -t your-dockerhub-username/your-repo-name:$TAG_NAME .
-#
-#      # 4. Docker 이미지 푸시
-#      - name: Push Docker image
-#        run: |
-#          TAG_NAME="latest"
-#          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
-#            TAG_NAME="main"
-#          elif [ "${{ github.ref }}" == "refs/heads/dev" ]; then
-#            TAG_NAME="dev"
-#          fi
-#          docker push your-dockerhub-username/your-repo-name:$TAG_NAME
+    steps:
+      - name: NCP Test Server Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.TEST_SERVER_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          password: ${{ secrets.TEST_SERVER_PASSWORD }}
+          script: |
+            CONTAINER_NAME="yog"
+            IMAGE_NAME="honee8583/yogi-odi-gym:dev"
+
+            echo "🔍 현재 실행 중인 컨테이너 확인 중..."
+            if [ "$(docker ps -q -f name=$CONTAINER_NAME)" ]; then
+                echo "🛑 실행 중인 컨테이너를 중지하고 삭제합니다..."
+                docker stop $CONTAINER_NAME
+                docker rm $CONTAINER_NAME
+            elif [ "$(docker ps -aq -f name=$CONTAINER_NAME)" ]; then
+                echo "⚠️ 컨테이너가 중지 상태입니다. 삭제 후 재시작합니다..."
+                docker rm $CONTAINER_NAME
+            fi
+
+            echo "📦 최신 Docker 이미지 Pull..."
+            docker pull $IMAGE_NAME
+
+            echo "🚀 새로운 컨테이너 실행..."
+            docker run -dit --name $CONTAINER_NAME -p 8080:8080 $IMAGE_NAME
+
+            echo "✅ 배포 완료!"
