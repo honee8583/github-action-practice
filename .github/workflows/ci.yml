@@ -89,6 +89,7 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             docker login yogi-odi-gym-registry.kr.ncr.ntruss.com
+            echo "${{ secrets.NCP_SECRET_KEY }}" | docker login cr.ncloud.com -u ${{ secrets.NCP_ACCESS_KEY }} --password-stdin
             
             if docker service inspect yog >/dev/null 2>&1; then
               echo "Updating existing service..."
