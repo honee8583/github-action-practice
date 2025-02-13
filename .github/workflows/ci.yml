@@ -53,25 +53,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: NCP Docker Swarm Deploy
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          script: |
-            if docker service inspect yog >/dev/null 2>&1; then
-              echo "Updating existing service..."
-              docker service update --image ${{ env.IMAGE_NAME }}:dev yog
-            else
-              echo "Creating new service..."
-              docker service create \
-                --name yog \
-                --replicas 3 \
-                -p 8080:8080 \
-                ${{ env.IMAGE_NAME }}:dev
-            fi
+    - name: NCP Docker Swarm Deploy
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        password: ${{ secrets.SSH_PASSWORD }}
+        script: |
+          if docker service inspect yog >/dev/null 2>&1; then
+            echo "Updating existing service..."
+            docker service update --image ${{ env.IMAGE_NAME }}:main yog
+          else
+            echo "Creating new service..."
+            docker service create \
+              --name yog \
+              --replicas 3 \
+              -p 8080:8080 \
+              ${{ env.IMAGE_NAME }}:main
+          fi
 
   deploy-dev:
     if: github.ref == 'refs/heads/dev'
