@@ -36,12 +36,12 @@ jobs:
           username: ${{ env.DOCKER_HUB_USERNAME }}
           password: ${{ env.DOCKER_HUB_TOKEN }}
 
-      - name: Get latest tag version
+      - name: Get latest tag
         id: get_tag
         run: |
-          TAG=$(git describe --tags --always)
-          echo "Latest tag is: $TAG"
-          echo "TAG=$TAG" >> $GITHUB_ENV  # 환경 변수로 설정하여 다른 스텝에서 사용 가능
+          TAG=$(git describe --tags --abbrev=0)
+          echo "The latest tag is: $TAG"
+          echo "TAG=$TAG" >> $GITHUB_ENV
 
       # 도커허브로 push
       - name: Docker Build and push
