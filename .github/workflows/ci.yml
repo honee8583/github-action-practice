@@ -38,7 +38,7 @@ jobs:
 
       - name: Fetch tags from remote
         run: |
-          git fetch --tags  # 태그를 가져옵니다.
+          git fetch --tags  # 태그를 가져옵니다.z
 
       - name: Get latest tag
         id: get_tag
