@@ -39,9 +39,9 @@ jobs:
       - name: Get latest tag version
         id: get_tag
         run: |
-          TAG=$(git tag --sort | head -n 1)  # 태그를 생성 날짜 기준으로 내림차순 정렬
+          TAG=$(git tag --sort=-creatordate | head -n 1)
           echo "Latest tag is: $TAG"
-          echo "TAG=$TAG" >> $GITHUB_ENV
+          echo "TAG=$TAG" >> $GITHUB_ENV  # 환경 변수로 설정하여 다른 스텝에서 사용 가능
 
       # 도커허브로 push
       - name: Docker Build and push
