@@ -90,7 +90,6 @@ jobs:
           script: |
             if docker service inspect yog >/dev/null 2>&1; then
               echo "Updating existing service..."
-#              docker service update --image ${{ env.IMAGE_NAME }}:dev yog
               docker service update --image ${{ secrets.NCP_REGISTRY_URL }}/yogi-odi-gym:dev yog
             else
               echo "Creating new service..."
@@ -98,5 +97,5 @@ jobs:
                 --name yog \
                 --replicas 3 \
                 -p 8080:8080 \
-                ${{ secrets.NCP_REGISTRY_URL }}/yogi-odi-gym:dev
+                ${{ env.IMAGE_NAME }}:dev
             fi
