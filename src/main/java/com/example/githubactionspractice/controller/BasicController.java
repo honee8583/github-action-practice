@@ -2,6 +2,7 @@ package com.example.githubactionspractice.controller;
 
 import com.example.githubactionspractice.entity.Member;
 import com.example.githubactionspractice.service.MemberService;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +18,9 @@ public class BasicController {
 
     @GetMapping("/hello")
     public ResponseEntity<?> hello() {
-        log.info("HELLO!");
-        return ResponseEntity.ok().body("hello1");
+        String randomString = UUID.randomUUID().toString();
+        log.info(randomString);
+        return ResponseEntity.ok().body(randomString);
     }
 
     @GetMapping("/member")
