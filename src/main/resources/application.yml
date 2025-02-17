@@ -1,12 +1,12 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: ENC(9XznOxvmierSowwBqv1mSk5KLPlShbUN6A5SvvppNpbHng14j0RoLTzkAQKqMpdT)
-#    username: ENC(yixVQ9U6WusuQMa34v+P8Q==)
-#    password: ENC(td4ZLVKdNy5JsVcp5yvuXsL0vGidbphp)
-    url: jdbc:mysql://10.0.1.12:3306/lab2db
-    username: student
-    password: abc123!@#
+    url: ENC(9XznOxvmierSowwBqv1mSk5KLPlShbUN6A5SvvppNpbHng14j0RoLTzkAQKqMpdT)
+    username: ENC(yixVQ9U6WusuQMa34v+P8Q==)
+    password: ENC(td4ZLVKdNy5JsVcp5yvuXsL0vGidbphp)
+#    url: jdbc:mysql://10.0.1.12:3306/lab2db
+#    username: student
+#    password: abc123!@#
 
   flyway:
     enabled: true
@@ -26,4 +26,4 @@ spring:
 jasypt:
   encryptor:
     bean: jasyptEncryptor
-    password: "file:/run/secrets/jasypt_password"
+    password: ${JASYPT_KEY}
