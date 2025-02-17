@@ -3,13 +3,11 @@ name: CI/CD
 on:
   push:
     branches: [ "main", "dev" ]
-#  pull_request:
-#    branches: [ "main", "dev" ]
 
 env:
   DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
   DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
-  IMAGE_NAME: ${{ secrets.DOCKER_HUB_USERNAME }}/yogi-odi-gym
+  IMAGE_NAME: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}
 
 jobs:
   build:
@@ -28,8 +26,8 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build with Gradle
-        run: ./gradlew build
+      - name: Build and Test
+        run: SPRING_PROFILES_ACTIVE=test JASYPT_KEY=${{ secrets.JASYPT_KEY }} ./gradlew build
 
       # 도커 로그인
       - name: Login Docker Hub
@@ -39,7 +37,7 @@ jobs:
           password: ${{ env.DOCKER_HUB_TOKEN }}
 
       # 도커허브로 push
-      - name: Docker Build and push
+      - name: Docker Image Build and Push
         uses: docker/build-push-action@v3
         with:
           context: .
@@ -47,13 +45,14 @@ jobs:
           push: true
           tags: ${{ env.IMAGE_NAME }}:${{ github.ref_name }}
 
+  # 운영서버 배포
   deploy-main:
     if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
 
     steps:
-    - name: NCP Docker Swarm Deploy
+    - name: Docker Swarm Deploy
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SSH_HOST }}
@@ -62,24 +61,26 @@ jobs:
         password: ${{ secrets.SSH_PASSWORD }}
         script: |
           if docker service inspect yog >/dev/null 2>&1; then
-            echo "Updating existing service..."
+            echo "✅도커 스웜 서비스를 업데이트합니다."
             docker service update --image ${{ env.IMAGE_NAME }}:main yog
           else
-            echo "Creating new service..."
+            echo "✅도커 스웜 서비스를 생성합니다."
             docker service create \
               --name yog \
-              --replicas 3 \
+              --replicas 6 \
               -p 8080:8080 \
+              --secret source=jasypt_password,target=jasypt_password \
               ${{ env.IMAGE_NAME }}:main
           fi
 
+  # 테스트 서버 배포
   deploy-dev:
     if: github.ref == 'refs/heads/dev'
     needs: build
     runs-on: ubuntu-latest
 
     steps:
-      - name: NCP Test Server Deploy
+      - name: Test Server Deploy
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.TEST_SERVER_HOST }}
@@ -88,7 +89,7 @@ jobs:
           password: ${{ secrets.TEST_SERVER_PASSWORD }}
           script: |
             CONTAINER_NAME="yog"
-            IMAGE_NAME="honee8583/yogi-odi-gym:dev"
+            IMAGE_NAME="${{ env.IMAGE_NAME }}:dev"
 
             echo "🔍 현재 실행 중인 컨테이너 확인 중..."
             if [ "$(docker ps -q -f name=$CONTAINER_NAME)" ]; then
