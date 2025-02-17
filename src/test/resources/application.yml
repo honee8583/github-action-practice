@@ -19,3 +19,8 @@ spring:
         highlight_sql: true
         use_sql_comments: true
     open-in-view: false
+
+jasypt:
+  encryptor:
+    bean: jasyptEncryptor
+    password: ${JASYPT_KEY}

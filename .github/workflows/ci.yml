@@ -27,7 +27,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build and Test
-        run: SPRING_PROFILES_ACTIVE=test ./gradlew build
+        run: SPRING_PROFILES_ACTIVE=test JASYPT_KEY=${{ secrets.JASYPT_KEY }} ./gradlew build
 
       # 도커 로그인
       - name: Login Docker Hub
