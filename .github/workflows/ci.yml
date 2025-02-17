@@ -26,7 +26,7 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build with Gradle
+      - name: Build and Test
         run: SPRING_PROFILES_ACTIVE=test ./gradlew build
 
       # 도커 로그인
@@ -37,7 +37,7 @@ jobs:
           password: ${{ env.DOCKER_HUB_TOKEN }}
 
       # 도커허브로 push
-      - name: Docker Build and push
+      - name: Docker Image Build and Push
         uses: docker/build-push-action@v3
         with:
           context: .
@@ -61,14 +61,15 @@ jobs:
         password: ${{ secrets.SSH_PASSWORD }}
         script: |
           if docker service inspect yog >/dev/null 2>&1; then
-            echo "Updating existing service..."
+            echo "✅도커 스웜 서비스를 업데이트합니다."
             docker service update --image ${{ env.IMAGE_NAME }}:main yog
           else
-            echo "Creating new service..."
+            echo "✅도커 스웜 서비스를 생성합니다."
             docker service create \
               --name yog \
               --replicas 6 \
               -p 8080:8080 \
+              --secret source=jasypt_password,target=jasypt_password \
               ${{ env.IMAGE_NAME }}:main
           fi
 
