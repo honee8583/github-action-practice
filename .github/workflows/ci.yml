@@ -65,10 +65,10 @@ jobs:
               echo "✅도커 스웜 서비스를 생성합니다."
               docker service create \
                 --name yog \
-                --replicas 3 \
+                --replicas 4 \
                 -p 8080:8080 \
                 --env JASYPT_KEY=${{ secrets.JASYPT_KEY }} \
-                --env PROFILES=prod
+                --env PROFILES=prod \
                 ${{ env.IMAGE_NAME }}:main
             fi
 
