@@ -106,6 +106,6 @@ jobs:
             docker pull $IMAGE_NAME
 
             echo "🚀 새로운 컨테이너 실행..."
-            docker run -dit --name $CONTAINER_NAME -p 8080:8080 $IMAGE_NAME
+            docker run -dit --name $CONTAINER_NAME -p 8080:8080 -e JASYPT_KEY=${JASYPT_KEY} $IMAGE_NAME
 
             echo "✅ 배포 완료!"
