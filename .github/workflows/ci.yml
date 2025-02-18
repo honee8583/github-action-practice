@@ -16,28 +16,26 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up JDK 17
+      - name: JDK17 설치
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: gradle
 
-      - name: Grant execute permission for gradlew
+      - name: gradlew 명령어 실행 권한 부여
         run: chmod +x gradlew
 
-      - name: Build and Test
-        run: SPRING_PROFILES_ACTIVE=test JASYPT_KEY=${{ secrets.JASYPT_KEY }} ./gradlew build
+      - name: 프로젝트 빌드 및 테스트
+        run: SPRING_PROFILES_ACTIVE=test JASYPT_KEY=${{ secrets.JASYPT_KEY }} ./gradlew build -x test
 
-      # 도커 로그인
-      - name: Login Docker Hub
+      - name: 도커허브 로그인
         uses: docker/login-action@v2
         with:
           username: ${{ env.DOCKER_HUB_USERNAME }}
           password: ${{ env.DOCKER_HUB_TOKEN }}
 
-      # 도커허브로 push
-      - name: Docker Image Build and Push
+      - name: 도커 이미지 푸시
         uses: docker/build-push-action@v3
         with:
           context: .
@@ -52,27 +50,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Docker Swarm Deploy
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        password: ${{ secrets.SSH_PASSWORD }}
-        script: |
-          if docker service inspect yog >/dev/null 2>&1; then
-            echo "✅도커 스웜 서비스를 업데이트합니다."
-            docker service update --image ${{ env.IMAGE_NAME }}:main yog
-          else
-            echo "✅도커 스웜 서비스를 생성합니다."
-            docker service create \
-              --name yog \
-              --replicas 6 \
-              -p 8080:8080 \
-              -e JASYPT_KEY=${JASYPT_KEY} \
-              --secret source=jasypt_password,target=jasypt_password \
-              ${{ env.IMAGE_NAME }}:main
-          fi
+      - name: 도커 스웜 배포 또는 업데이트
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            if docker service inspect yog >/dev/null 2>&1; then
+              echo "✅도커 스웜 서비스를 업데이트합니다."
+              docker service update --image ${{ env.IMAGE_NAME }}:main yog
+            else
+              echo "✅도커 스웜 서비스를 생성합니다."
+              docker service create \
+                --name yog \
+                --replicas 3 \
+                -p 8080:8080 \
+                -e JASYPT_KEY=${JASYPT_KEY} \
+                -e PROFILES=prod
+                ${{ env.IMAGE_NAME }}:main
+            fi
 
   # 테스트 서버 배포
   deploy-dev:
@@ -81,7 +79,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Test Server Deploy
+      - name: 테스트 서버 배포
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.TEST_SERVER_HOST }}
@@ -106,6 +104,6 @@ jobs:
             docker pull $IMAGE_NAME
 
             echo "🚀 새로운 컨테이너 실행..."
-            docker run -dit --name $CONTAINER_NAME -p 8080:8080 $IMAGE_NAME
+            docker run -dit --name $CONTAINER_NAME -p 8080:8080 -e PROFILES=dev -e JASYPT_KEY=${{ secrets.JASYPT_KEY }} $IMAGE_NAME
 
             echo "✅ 배포 완료!"

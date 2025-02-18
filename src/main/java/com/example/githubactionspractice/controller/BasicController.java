@@ -5,6 +5,7 @@ import com.example.githubactionspractice.service.MemberService;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,11 +17,19 @@ public class BasicController {
 
     private final MemberService memberService;
 
+    @Value("${health.env}")
+    private String env;
+
     @GetMapping("/hello")
     public ResponseEntity<?> hello() {
         String randomString = UUID.randomUUID().toString();
         log.info(randomString);
         return ResponseEntity.ok().body(randomString);
+    }
+
+    @GetMapping("/health")
+    public ResponseEntity<?> health() {
+        return ResponseEntity.ok().body(env);
     }
 
     @GetMapping("/member")

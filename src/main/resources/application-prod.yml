@@ -1,0 +1,24 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ENC(AESFgZv9pzVmujL0GucL0xRW713Wmg5+MSNshtfPUzlnH2mEN8hulQ==) # jdbc:mysql://10.0.1.12:3306/yog
+    username: ENC(mEIF/Psek3RVySoZ6lcCGNpaHxDEyrzy) # yogiodigym
+    password: ENC(TS17YebrgCfFaFpXWQpWhJFDH/EBaU6N) # abc123!@#
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
+    open-in-view: false
+
+health:
+  env: prod
+
+

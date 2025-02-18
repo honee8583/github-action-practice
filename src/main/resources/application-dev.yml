@@ -1,0 +1,24 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ENC(jYUhBuGtGJl4av+DFTPnnxobFeTO3wNltqfD29cIiNapSOHKwpQcjHuGZapT6JqF) # jdbc:mysql://10.0.1.12:3306/test
+    username: ENC(yixVQ9U6WusuQMa34v+P8Q==) # student
+    password: ENC(td4ZLVKdNy5JsVcp5yvuXsL0vGidbphp) # abc123!@#
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
+    open-in-view: false
+
+health:
+  env: dev
