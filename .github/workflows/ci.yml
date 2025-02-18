@@ -67,8 +67,8 @@ jobs:
                 --name yog \
                 --replicas 3 \
                 -p 8080:8080 \
-                -e JASYPT_KEY=${JASYPT_KEY} \
-                -e PROFILES=prod
+                -env JASYPT_KEY=${{ secrets.JASYPT_KEY }} \
+                -env PROFILES=prod
                 ${{ env.IMAGE_NAME }}:main
             fi
 
