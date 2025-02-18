@@ -5,8 +5,8 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ENC(js5dhoSpt0+ZM5AoET6vmoHZZge72rhWXKej7IZ57mh7u0VPG0+RZQ==) # jdbc:mysql://10.0.1.12:3306/yog
-    username: ENC(UD+2magDLlQPoZSgSqhOmw==) # student
+    url: ENC(AESFgZv9pzVmujL0GucL0xRW713Wmg5+MSNshtfPUzlnH2mEN8hulQ==) # jdbc:mysql://10.0.1.12:3306/yog
+    username: ENC(mEIF/Psek3RVySoZ6lcCGNpaHxDEyrzy) # yogiodigym
     password: ENC(TS17YebrgCfFaFpXWQpWhJFDH/EBaU6N) # abc123!@#
 
   jpa:
